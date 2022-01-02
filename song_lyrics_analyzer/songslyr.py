@@ -1,4 +1,3 @@
-# importing modules
 from lyrics_extractor import SongLyrics
 from tkinter import *
 from numpy import integer
@@ -8,6 +7,7 @@ import spotipy
 from random import randint
 from spotipy.oauth2 import SpotifyClientCredentials
 
+# initialize spotify client credentials
 cid = '8151af96b02d42c9801c4f189f7334a9'
 secret = '31bf22a14cda421898fc18ac714c75e4'
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
@@ -15,10 +15,12 @@ sp = spotipy.Spotify(client_credentials_manager
 =
 client_credentials_manager)
 
+# make track attribute arrays
 artist_name = []
 track_name = []
 popularity = []
 
+# get popular artists,tracks and popularity for each artist
 for i in range(0,1000,50):
     track_results = sp.search(q='year:2021', type='track', limit=50,offset=i)
     for i, t in enumerate(track_results['tracks']['items']):
@@ -26,19 +28,20 @@ for i in range(0,1000,50):
         track_name.append(t['name'])
         popularity.append(t['popularity'])
 
-# pass the GCS_API_KEY, GCS_ENGINE_ID
-# user defined function
+
+# clear function to remove label text
 def clear_widget_text(widget):
     widget.destroy()
 
+#get lyrics function- uses GCS API KEY and GCS ENGINE ID to retrieve wanted lyrics from input from genius.com
 def get_lyrics():
     extract_lyrics = SongLyrics("AIzaSyDYxm7BSo2ScHWBjhkCeTbRkUBH8qRI5DM","baf4c9b4758d46256")
     temp = extract_lyrics.get_lyrics(str(e.get()))
     res = temp['lyrics']
     result.set(res)
     
+#modified get lyrics function that generates a random track    
 def get_rand_lyrics():
-
     extract_lyrics = SongLyrics("AIzaSyDYxm7BSo2ScHWBjhkCeTbRkUBH8qRI5DM","baf4c9b4758d46256")
     i = randint(0,1000)
     temp = extract_lyrics.get_lyrics(str(track_name[i]))
@@ -63,6 +66,7 @@ master = Tk()
 master.configure(bg='light grey')
 boxy = Grid()
 
+#Scroll bar implementation
 scroll = Scrollbar(master)
  
 # Variable Classes in tkinter
@@ -81,13 +85,14 @@ disp = Label(master, text="", textvariable=result,
 e = Entry(master, width=50)
 e.grid(row=0, column=1)
  
-# creating a button using the widget
+# a button using the widget
 b = Button(master, text="Show",
            command=get_lyrics, bg="Blue")
  
 b.grid(row=0, column=2, columnspan=2,
        rowspan=2, padx=5, pady=5,)
 
+# Random button
 c = Button(master, text="Random",
            command=get_rand_lyrics, bg="Blue")
 c.grid(row=0, column=4, columnspan=2,
